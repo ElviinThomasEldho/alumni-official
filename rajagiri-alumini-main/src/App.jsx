@@ -22,7 +22,7 @@ const App = () => {
   useEffect(() => {
     const config = {
       headers: {
-        Authorization: "token 068d14bd3d8816b27c4619ce471778f996f8ac79",
+        Authorization: `token 068d14bd3d8816b27c4619ce471778f996f8ac79`,
       },
     };
     axios

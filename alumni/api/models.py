@@ -30,7 +30,7 @@ class Account(models.Model):
     following = models.ManyToManyField('self', blank=True)
 
     def __str__(self):
-        return str(self.id)
+        return str(self.id) + " | " + str(self.user.username)
 
     
 class Student(models.Model):
@@ -75,7 +75,7 @@ class Like(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return (str(self.account.id) + " | " + str(self.date_created))
+        return (str(self.id) + " | " + str(self.account.id) + " | " + str(self.date_created))
     
 class Comment(models.Model):
     account = models.ForeignKey(Account, null=True, on_delete=models.CASCADE)
@@ -84,7 +84,7 @@ class Comment(models.Model):
     likes = models.IntegerField('Likes', default=0)
 
     def __str__(self):
-        return (self.text + " | " + str(self.date_created))
+        return (str(self.id) + " | " + self.text + " | " + str(self.date_created))
     
 
 class Post(models.Model):
@@ -97,7 +97,7 @@ class Post(models.Model):
     comments = models.ManyToManyField(Comment, blank=True)
 
     def __str__(self):
-        return (self.caption + " | " + str(self.date_created))
+        return (str(self.id) + " | " + self.caption + " | " + str(self.date_created))
     
 
 class Job(models.Model):

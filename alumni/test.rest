@@ -154,3 +154,41 @@ Authorization: Token 78af7dc45adb5f8265f995872a506c693ff98fcc
 {}
 
 ###
+
+GET http://localhost:8000/api/get-post-comments/6/
+Content-Type: application/json
+Authorization: Token 78af7dc45adb5f8265f995872a506c693ff98fcc
+
+{}
+
+###
+
+GET http://localhost:8000/api/get-room/9/
+Content-Type: application/json
+Authorization: Token 78af7dc45adb5f8265f995872a506c693ff98fcc
+
+{}
+
+###
+
+POST http://localhost:8000/api/create-private-room/3/
+Content-Type: application/json
+Authorization: Token 78af7dc45adb5f8265f995872a506c693ff98fcc
+
+{}
+
+###
+
+POST http://localhost:8000/api/create-group-room/
+Content-Type: application/json
+Authorization: Token 78af7dc45adb5f8265f995872a506c693ff98fcc
+
+{
+    "id": 15,
+    "name": "group 2",
+    "users": [
+      8
+    ]
+  }
+
+###

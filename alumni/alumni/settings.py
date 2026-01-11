@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'daphne',
     'channels',
-    'daphne',
     'core',
     'room',
     'rest_framework',

@@ -11,6 +11,9 @@ class Room(models.Model):
     slug = models.SlugField(unique=True)
     type = models.TextField('Type', choices=TYPE, default="Direct")
     users = models.ManyToManyField(User)
+    
+    def __str__(self):
+        return str(self.id) + " | " + self.name + " | " + self.type
 
 
 class Message(models.Model):
@@ -21,3 +24,6 @@ class Message(models.Model):
 
     class Meta:
         ordering = ('date_added',)
+    
+    def __str__(self):
+        return str(self.id) + " | " + self.room.name + " | " + self.date_added

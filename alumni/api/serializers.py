@@ -40,4 +40,14 @@ class JobSerializer(serializers.ModelSerializer):
 class RoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room
+        exclude = ('slug', 'type')
+
+class RoomSerializer2(serializers.ModelSerializer):
+    class Meta:
+        model = Room
+        fields = '__all__'
+
+class MessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
         fields = '__all__'

@@ -21,6 +21,11 @@ from room.models import Room, Message
 from room.forms import RoomCreationForm, GroupCreationForm
 from django.utils.crypto import get_random_string
 
+import datetime
+
+def to_integer(dt_time):
+    return 10000*dt_time.year + 100*dt_time.month + dt_time.day
+
 @api_view(['GET'])
 def apiOverview(request):
     api_urls = {
@@ -200,7 +205,7 @@ def commentPost(request, pk):
 @permission_classes([IsAuthenticated])
 def getPostComments(request, pk):
     post = Post.objects.get(id=pk)
-    serializer = CommentSerializer(post.comments_list, many=True)
+    serializer = CommentSerializer(post.comments.all(), many=True)
     return Response(serializer.data)   
 
 @api_view(['GET'])
@@ -226,54 +231,45 @@ def deletePost(request, pk):
 @permission_classes([IsAuthenticated])
 def create_private_room(request, pk):
     user1 = request.user
-    user2 = User.objects.get(id=pk)
+    user2 = Account.objects.get(id=pk).user
     name = user1.username + user2.username
     slug = get_random_string(8,'0123456789')
     # if not Room.objects.filter(users__in=[user1, user2]).exists():
-    room = Room.objects.get_or_create(name=name, slug=slug, type="Direct")
+    room = Room.objects.create(name=name, slug=slug, type="Direct")
     room.users.add(user1)
     room.users.add(user2)
-
-    messages = Message.objects.filter(room=room)[0:25]
-
-    
-
-    return JsonResponse({'room': room, 'messages': messages})
+    serializer = RoomSerializer2(room, many=False)
+    return Response({'room': serializer.data})
+    # else:
+    #     return Response('Room already exists',status=status.HTTP_400_BAD_REQUEST)
 
     # return render(request, 'room/room.html', {'room': room, 'messages': messages})
-
-@api_view(['GET'])
-@authentication_classes([SessionAuthentication, TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def get_private_room(request, pk):
-    room = Room.objects.get(id = pk)
-
-    messages = Message.objects.filter(room=room)[0:25]
-
-    return JsonResponse({'room': room, 'messages': messages})
 
 @api_view(['POST'])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def create_group_room(request):
-    if request.method == 'POST':
-        form = GroupCreationForm(request.POST)
-        if form.is_valid():
-            room = form.save()
-            room.type = 'Group'
-            room.slug = get_random_string(8,'0123456789')
-            room.save()
-            return redirect('room', slug=room.slug)
-    else:
-        form = GroupCreationForm()
-    return render(request, 'room/create_room.html', {'form': form})
+    serializer = RoomSerializer(data=request.data)
+    slug = get_random_string(8,'0123456789')
+    if serializer.is_valid():
+        room = serializer.save()
+        room.type = "Group"
+        room.slug = slug
+        room.save()
+        serializer = RoomSerializer2(room, many=False)
+        return Response(serializer.data)
+    else: 
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def get_group_room(request, pk):
-    room = Room.objects.get(id = pk)
-
-    messages = Message.objects.filter(room=room)[0:25]
-
-    return JsonResponse({'room': room, 'messages': messages})
+def get_room(request, pk):
+    room = Room.objects.get(id = pk)    
+    roomSerializer = RoomSerializer2(room, many=False)
+    messages = room.messages.all()
+    messageSerializer = MessageSerializer(messages, many=True)
+    return Response({'room':roomSerializer.data, 'messages':messageSerializer.data})
+    # except:
+    #     return Response('Room not found',status=status.HTTP_400_BAD_REQUEST)
+        

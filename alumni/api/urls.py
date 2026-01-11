@@ -28,4 +28,8 @@ urlpatterns = [
     path('get-post-comments/<int:pk>/', views.getPostComments, name="getPostComments"),
     path('get-comment/<int:pk>/', views.getComment, name="getComment"),
     path('delete-post/<int:pk>/', views.deletePost, name="deletePost"),
+    
+    path('create-private-room/<int:pk>/', views.create_private_room, name="create_private_room"),
+    path('create-group-room/', views.create_group_room, name="create_group_room"),
+    path('get-room/<int:pk>/', views.get_room, name="get_room"),
 ]
